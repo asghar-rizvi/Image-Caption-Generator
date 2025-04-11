@@ -4,16 +4,21 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, JSONResponse
 import os
 from pathlib import Path
-from prediction import process_image_and_predict
+from prediction import preprocess_img, load_models
 import uuid
 
 app = FastAPI()
 
-# Set up templates and static files
+@app.on_event("startup")
+async def load_models_on_startup():
+    load_models()
+    print("Models loaded successfully")
+
+# templates and static file setup
 BASE_DIR = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(Path(BASE_DIR, 'templates')))
-app.mount("/static", StaticFiles(directory=str(Path(BASE_DIR, 'static'))), name="static")
-
+# app.mount("/static", StaticFiles(directory=str(Path(BASE_DIR, 'static'))), name="static")
+#
 # Create upload directory if it doesn't exist
 UPLOAD_DIR = Path(BASE_DIR, "uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
@@ -25,7 +30,6 @@ async def home(request: Request):
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     try:
-        # Save uploaded file temporarily
         file_ext = file.filename.split(".")[-1]
         file_name = f"{uuid.uuid4()}.{file_ext}"
         file_path = Path(UPLOAD_DIR, file_name)
@@ -34,7 +38,7 @@ async def predict(file: UploadFile = File(...)):
             buffer.write(await file.read())
         
         # Process image and get caption
-        caption = process_image_and_predict(file_path)
+        caption = preprocess_img(file_path)
         
         # Delete the temporary file
         file_path.unlink()
