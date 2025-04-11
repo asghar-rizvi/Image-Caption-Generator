@@ -6,7 +6,7 @@ import os
 def store_vgg16():
     
     # Create models directory if it doesn't exist
-    os.makedirs('models', exist_ok=True)
+    os.makedirs('model', exist_ok=True)
 
     # Load VGG16 (will download weights on first run)
     base_model = VGG16(weights='imagenet')

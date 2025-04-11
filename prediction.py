@@ -6,14 +6,12 @@ from tensorflow.keras.models import load_model
 import pickle
 import os
 
-# Configuration
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 MAX_LENGTH = 37
 
 def load_models():
     global VGG_MODEL, caption_model, tokenizer
     
-    # Load models
     VGG_MODEL = load_model('model/vgg16_feature_extractor.keras')
 
     caption_model = load_model('model/Vision2Text.keras')
@@ -35,7 +33,7 @@ def predict_caption(model, image, tokenizer, max_length):
         sequence = pad_sequences([sequence], max_length, padding='post')
         yhat = model.predict([image, sequence], verbose=0)
         yhat = np.argmax(yhat)
-        word = idx_to_word(yhat, tokenizer) # converting model result into a word
+        word = idx_to_word(yhat, tokenizer)
         if word is None:
             break
         in_text += " " + word
@@ -48,20 +46,16 @@ def predict_caption(model, image, tokenizer, max_length):
 
 def preprocess_img(img_path):
     image = load_img(img_path, target_size=(224, 224))
-    # convert image pixels to numpy array
     image = img_to_array(image)
-    # reshape data for model
     image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
-    # preprocess image from vgg
     image = preprocess_input(image)
 
-    # extract features
     feature = VGG_MODEL.predict(image, verbose=0)
     caption = predict_caption(caption_model, feature, tokenizer, MAX_LENGTH)
     return caption
     
 if __name__ == '__main__':
     load_models()
-    test_image = '2_dogs.jpg'  # Change to your image path
+    test_image = '2_dogs.jpg'  
     caption = preprocess_img(test_image)
     print(f"\nGenerated caption: {caption}")
