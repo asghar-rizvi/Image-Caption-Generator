@@ -1,6 +1,9 @@
 # Visual Caption Generator
 
-## Architecture
+<div align="center">
+  <img src="https://github.com/asghar-rizvi/Image-Caption-Generator/raw/main/Output/Screenshot%202025-04-12%20144839.png" width="600" alt="Caption Example">
+</div>## Architecture
+
 ```mermaid
 graph LR
     A[Image] --> B[VGG16-CNN]
@@ -33,3 +36,8 @@ graph LR
 | Batch Size      | 64                  |
 | Optimizer       | AdamW (lr=3e-4)     |
 | Loss            | Label Smoothing     |
+
+## Output
+<div align="center">
+  <img src="https://github.com/asghar-rizvi/Image-Caption-Generator/blob/main/Output/Screenshot%202025-04-12%20144852.png" width="600" alt="Caption Example">
+</div>
